@@ -29,7 +29,7 @@ pc_rel: mov     @r0,a           ; store in str_d
         movx    @dptr,a         ; store in str_x 
         push    acc             ; store in stack
         inc     dptr            ; advance pointers 
-				inc     r0
+        inc     r0
         inc     r1 
         inc     r7 
         djnz    r6,loop1        ; loop 16 times 
