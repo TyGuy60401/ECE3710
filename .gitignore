@@ -6,7 +6,7 @@
 
 **/*cyglink*
 
-lab*/lab*
+lab*/*
 
 !lab*/*.OBJ
 !lab*/*.asm
