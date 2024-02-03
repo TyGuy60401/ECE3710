@@ -27,7 +27,19 @@ speed:  DS 1
                             ; reset? !!!
                             ; !!! Also initialize direction !!!
         LCALL   Display
-        LCALL   PreDelay
+pre_loop:
+        LCALL   Pre_delay
+        LCALL   Check_buttons   ; Loads which buttons were pressed into the accumulator
+        ; ANL     A, #11000000b   ; Takes the output off of A
+        ; CJNE    A, #0C0h, pre_loop    ; If both buttons were pressed
+        CJNE    pos, #00, right_start ; If pos != 0 (must equal 10) then go to right start
+left_start:
+        CJNE    A, #80h, pre_loop 
+        JMP     Game_loop
+right_start:
+        CJNE    A, #40h, pre_loop
+        JMP     Game_loop
+        
 
 ; ------ Display ------
 Display:
@@ -47,10 +59,18 @@ disp_bit:
         MOV     R1, A           ; Move A into R3 to use it as an address
         MOV     @R1, #0         ; Set the bit addressed by R3 to 0 and illuminate the right LED
 
-; ------ PreDelay ------
-PreDelay:
+; ------ pre_delay ------
+Pre_delay:
         MOV     R2, #67
 otlp:   MOV R3, #200            ; Load R3 with 200, 200 * 67 * 1.5 us = 20.1 ms
 inlp:   DJNZ    R3, inlp
         DJNZ    R2, otlp
+        RET
+; ------ Check_buttons ------
+Check_buttons: 
+        MOV     A, P2
+        CPL     A                ; CPL inputs since active low.
+        XCH     A, old_button    ; puts the value of the new buttons in storage and puts the value of the old buttons on the ACC
+        XRL     A, old_button    ; If the buttons are the same change them to 0's
+        ANL     A, old_button    ; If the buttons were different and they were pressed they stay.
         RET
