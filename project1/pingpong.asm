@@ -1,4 +1,3 @@
-; :asmsyntax=nasm
 $include (c8051f020.inc)
 
         DSEG at 20h
@@ -17,7 +16,7 @@ game_over:
         CSEG
 ; ------ Initialize ------
         MOV     wdtcn, #0DEh    ; disable watchdog
-        MOV     xb42, #40h      ; enable port output
+        MOV     xbr2, #40h      ; enable port output
 
         SETB    P2.7            ; Input button
         SETB    P2.6            ; Input button
@@ -39,7 +38,8 @@ Game_loop:
         LCALL   Manage_dip_state
         LCALL   Change_pos
         LCALL   Check_game_over
-        CJNE    game_over, #00, not_over; game_over == 1 
+        MOV     A, game_over
+        CJNE    A, #00, not_over; game_over == 1 
         RET
 not_over:
         LCALL   Delay
@@ -52,7 +52,8 @@ pre_loop:
         LCALL   Check_buttons   ; Loads which buttons were pressed into the accumulator
         ; ANL     A, #11000000b   ; Takes the output off of A
         ; CJNE    A, #0C0h, pre_loop    ; If both buttons were pressed
-        CJNE    pos, #00, right_start ; If pos != 0 (must equal 10) then go to right start
+        MOV     R4, pos
+        CJNE    R4, #00, right_start ; If pos != 0 (must equal 10) then go to right start
 left_start:
         CJNE    A, #80h, pre_loop 
         RET
@@ -64,14 +65,14 @@ right_start:
 Manage_dip_state:
         MOV     A, P1           ; P1 contains the input from the DIP Switches
         ANL     A, #11000000b   ; P1_win is the first 2 DIP switches
-        RL
-        RL                      ; Now A has the proper value for P1_win
+        RL      A
+        RL      A               ; Now A has the proper value for P1_win
         MOV     P1_win, A       ; P1_win has right value now
 
         MOV     A, P1
         ANL     A, #00110000b
         MOV     R2, #4
-shftlp: RL
+shftlp: RL      A
         DJNZ    R2, shftlp      ; Would have probably been faster, and more memory efficient, to just RL 4 times
 
         MOV     A, P1
@@ -81,7 +82,8 @@ shftlp: RL
 
 ; ------ Change_pos ------
 Change_pos:
-        CJNE    dir, #1, move_right ; If dir == 0, move_right
+        MOV     R4, dir
+        CJNE    R4, #1, move_right ; If dir == 0, move_right
 move_left:
         DEC     pos
 move_right:
@@ -90,12 +92,13 @@ move_right:
 
 ; ------ Check_game_over ------
 Check_game_over:
-        CJNE    pos, #0FFh, check_right 
+        MOV     R4, pos
+        CJNE    R4, #0FFh, check_right 
         MOV     game_over, #01
         MOV     pos, #00
         RET
 check_right:
-        CJNE    pos, #11, game_not_over
+        CJNE    R4, #11, game_not_over
         MOV     game_over, #01
         MOV     pos, #10
         RET
