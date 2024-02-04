@@ -4,7 +4,7 @@ $include (c8051f020.inc)
 pos:    DS 1
 old_button:
         DS 1
-dir:    DS 1                    ; direction
+dir:    DS 1                    ; direction (0 left, 1 right)
 p1_win: DS 1                    ; player 1 window (1-3) DIP Switches 0,1
 p2_win: DS 1                    ; player 2 window (1-3) DIP Switches 2,3
 start_pos:
@@ -39,18 +39,26 @@ Game_loop:
         LCALL   Change_pos
         LCALL   Check_game_over
         MOV     A, game_over
-        CJNE    A, #00, not_over; game_over == 1 
+        CJNE    A, #00, not_over        ; game_over == 1 
         RET
 not_over:
         LCALL   Delay
+        LCALL   Check_buttons           ; Button input is now loaded onto A
+        CJNE    A, #00, Game_loop       ; If no buttons were pressed, then restart the game_loop
+        MOV     R5, dir                 ; Using R5 because it hasn't been used before
+        CJNE    R5, #00, mvg_r          ; If dir is 1 then mvg_r
+        LCALL   Manage_left_win         ;
+        JMP     Game_loop
+mvg_r:  LCALL   Manage_right_win
+        JMP     Game_loop
 
 ; ------ Wait_for_start ------
 Wait_for_start:
         LCALL   Display
 pre_loop:
         LCALL   Pre_delay
-        LCALL   Check_buttons   ; Loads which buttons were pressed into the accumulator
-        ; ANL     A, #11000000b   ; Takes the output off of A
+        LCALL   Check_buttons           ; Loads which buttons were pressed into the accumulator
+        ; ANL     A, #11000000b         ; Takes the output off of A
         ; CJNE    A, #0C0h, pre_loop    ; If both buttons were pressed
         MOV     R4, pos
         CJNE    R4, #00, right_start ; If pos != 0 (must equal 10) then go to right start
@@ -110,6 +118,30 @@ Delay:
         ; I wanna use a lookup table to determine the amount of delay
         ; base on the value of speed 
 
+; ------ Manage_left_win ------
+Manage_left_win:                ; It is going left, and the button input is already in A
+        CJNE    A, #80h, end_left
+        ; We need to find if pos is in the window or not
+        MOV     A, pos
+        DEC     A
+        CJNE    A, p1_win, nxt_left ; Carry flag is set if (pos - 1) < p1_win
+nxt_left:
+        JNC     end_left
+        MOV     dir, #01        ; Dir is now 1 because the left paddle was pressed while insde the window
+end_left:
+        RET
+
+; ------ Manage_right_win ------
+Manage_right_win:
+        CJNE    A, #40h, end_right
+        ; We need to find if pos is in the window or not
+        MOV     A, pos
+        CJNE    A, p1_win, nxt_right ; Carry flag is set if (pos) < p2_win
+nxt_right:
+        JC      end_right
+        MOV     dir, #00
+end_right:
+        RET
 ; ------ Display ------
 Display:
         ORL     P3, #0FFh
@@ -126,7 +158,7 @@ gt_eight:
         ADD     A, pos          ; A now has the bit address for the appropriate port if pos > 8
 disp_bit:
         MOV     R1, A           ; Move A into R3 to use it as an address
-        MOV     @R1, #0         ; Set the bit addressed by R3 to 0 and illuminate the right LED
+        CLR     @R1             ; Clear the bit addressed by R1 to 0 and illuminate the right LED
         RET
 
 ; ------ pre_delay ------
