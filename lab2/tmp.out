@@ -1,14 +1,5 @@
 
-BL51 BANKED LINKER/LOCATER V6.22.2.0 - SN: Eval Version
-COPYRIGHT ARM Germany GmbH 1987 - 2017
-"C:\Users\tydav\gitLocals\ECE3710\lab2\Lab2.obj"  TO "C:\Users\tydav\gitLocals\ECE3710\lab2\Lab2" RS(256) PL(68) PW(78)  
+A51 MACRO ASSEMBLER V8.2.7.0 - SN: Eval Version
+COPYRIGHT ARM Germany GmbH 2016
 
-******************************************************************************
-* RESTRICTED VERSION WITH 0800H BYTE CODE SIZE LIMIT; USED: 001EH BYTE ( 1%) *
-******************************************************************************
-
->> 
->> 
->> 
-Program Size: data=8.0 xdata=0 code=30
-LINK/LOCATE RUN COMPLETE.  0 WARNING(S),  0 ERROR(S)
+ASSEMBLY COMPLETE.  0 WARNING(S), 0 ERROR(S)

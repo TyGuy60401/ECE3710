@@ -16,17 +16,27 @@ game_over:
         CSEG
 ; ------ Initialize ------
         MOV     wdtcn, #0DEh    ; disable watchdog
+        MOV     wdtcn, #0ADh
         MOV     xbr2, #40h      ; enable port output
 
         SETB    P2.7            ; Input button
         SETB    P2.6            ; Input button
+        MOV     A, #0FFh
+        MOV     P1, A           ; Input DIP switches
 
-        MOV     pos, #00    ; !!! Working on getting
-        MOV     dir, #01    ; the right initial position
-                            ; based on last start_pos
-                            ; Does any RAM stay after
-                            ; reset? !!!
-                            ; !!! Also initialize direction !!!
+        MOV     A, start_pos
+        XRL     A, #01
+        MOV     start_pos, A
+
+        JB      start_pos.0, start_right ; starting position based on start_pos.0 
+start_left:
+        MOV     pos, #00h
+        MOV     dir, #01
+        JMP     start_1
+start_right:
+        MOV     pos, #09
+        MOV     dir, #00
+start_1:  
         MOV     game_over, #00
         LCALL   Wait_for_start
         LCALL   Game_loop
@@ -37,15 +47,18 @@ endlp:  SJMP    endlp
 Game_loop:
         LCALL   Manage_dip_state
         LCALL   Change_pos
+        LCALL   Display
         LCALL   Check_game_over
         MOV     A, game_over
-        CJNE    A, #00, not_over        ; game_over == 1 
+        CJNE    A, #01, not_over        ; game_over == 1 
         RET
 not_over:
         LCALL   Delay
-        LCALL   Check_buttons           ; Button input is now loaded onto A
-        CJNE    A, #00, Game_loop       ; If no buttons were pressed, then restart the game_loop
-        MOV     R5, dir                 ; Using R5 because it hasn't been used before
+
+        CJNE    A, #00, buttons         ; If no buttons were pressed, then restart the game_loop
+        SJMP    Game_loop
+buttons:
+				MOV     R5, dir                 ; Using R5 because it hasn't been used before
         CJNE    R5, #00, mvg_r          ; If dir is 1 then mvg_r
         LCALL   Manage_left_win         ;
         JMP     Game_loop
@@ -58,10 +71,12 @@ Wait_for_start:
 pre_loop:
         LCALL   Pre_delay
         LCALL   Check_buttons           ; Loads which buttons were pressed into the accumulator
-        ; ANL     A, #11000000b         ; Takes the output off of A
-        ; CJNE    A, #0C0h, pre_loop    ; If both buttons were pressed
+        ANL     A, #11000000b         ; Takes the output off of A
+        CJNE    A, #00h, button_pressed ; If both buttons were pressed
+        SJMP    pre_loop
+button_pressed:
         MOV     R4, pos
-        CJNE    R4, #00, right_start ; If pos != 0 (must equal 10) then go to right start
+        CJNE    R4, #09, right_start ; If pos != 0 (must equal 10) then go to right start
 left_start:
         CJNE    A, #80h, pre_loop 
         RET
@@ -79,12 +94,11 @@ Manage_dip_state:
 
         MOV     A, P1
         ANL     A, #00110000b
-        MOV     R2, #4
-shftlp: RL      A
-        DJNZ    R2, shftlp      ; Would have probably been faster, and more memory efficient, to just RL 4 times
+        SWAP    A
+				MOV     P2_win, A
 
         MOV     A, P1
-        ANL     A, #0Fh         ; The remaining bits contain the speed value
+        ANL     A, #03h         ; The remaining bits contain the speed value
         MOV     speed, A
         RET
 
@@ -93,9 +107,10 @@ Change_pos:
         MOV     R4, dir
         CJNE    R4, #1, move_right ; If dir == 0, move_right
 move_left:
-        DEC     pos
-move_right:
         INC     pos
+				RET
+move_right:
+        DEC     pos
         RET
 
 ; ------ Check_game_over ------
@@ -106,7 +121,7 @@ Check_game_over:
         MOV     pos, #00
         RET
 check_right:
-        CJNE    R4, #11, game_not_over
+        CJNE    R4, #10, game_not_over
         MOV     game_over, #01
         MOV     pos, #10
         RET
@@ -115,15 +130,39 @@ game_not_over:
 
 ; ------ Delay ------
 Delay:
-        ; I wanna use a lookup table to determine the amount of delay
-        ; base on the value of speed 
+        MOV     A, speed
+        CJNE    A, #03, comp_two
+        MOV     R4, #1
+        SJMP    l0
+comp_two:
+        CJNE    A, #02, comp_one
+        MOV     R4, #3
+        SJMP    l0
+comp_one:
+        CJNE    A, #01, comp_zero
+        MOV     R4, #7
+        SJMP    l0
+comp_zero:
+        CJNE    A, #00, comp_one
+        MOV     R4, #50
+        
+    
+l0:     MOV     R2, #33
+l1:     MOV     R3, #200
+l2:     DJNZ    R3, l2
+        DJNZ    R2, l1
+        LCALL   Check_buttons           ; Button input is now loaded onto A
+				CJNE    A, #00, delay_end
+        DJNZ    R4, l0
+delay_end:
+        RET
 
 ; ------ Manage_left_win ------
 Manage_left_win:                ; It is going left, and the button input is already in A
-        CJNE    A, #80h, end_left
+        CJNE    A, #40h, end_left
         ; We need to find if pos is in the window or not
         MOV     A, pos
-        DEC     A
+        INC     p1_win
         CJNE    A, p1_win, nxt_left ; Carry flag is set if (pos - 1) < p1_win
 nxt_left:
         JNC     end_left
@@ -133,7 +172,7 @@ end_left:
 
 ; ------ Manage_right_win ------
 Manage_right_win:
-        CJNE    A, #40h, end_right
+        CJNE    A, #80h, end_right
         ; We need to find if pos is in the window or not
         MOV     A, pos
         CJNE    A, p1_win, nxt_right ; Carry flag is set if (pos) < p2_win
@@ -143,28 +182,62 @@ nxt_right:
 end_right:
         RET
 ; ------ Display ------
-Display:
+; Display:
+;         ORL     P3, #0FFh
+;         ORL     P2, #03h
+;         MOV     A, #08
+;         CJNE    A, pos, lse_eight ; carry if A < pos
+; lse_eight:
+;         JC      gt_eight
+;         MOV     A, #0B0h        ; #0B0h because that's the start of the port 3 bit addresses
+;         ADD     A, pos          ; A now has the bit address for the appropriate port if pos <= 8
+;         SJMP    disp_bit
+; gt_eight:
+;         MOV     A, #97h         ; 97h + 09h = 
+;         ADD     A, pos          ; A now has the bit address for the appropriate port if pos > 8
+; disp_bit:
+;         MOV     R1, A           ; Move A into R3 to use it as an address
+;         CLR     @R1             ; Clear the bit addressed by R1 to 0 and illuminate the right LED
+;         RET
+
+; ------ Display ------
+Display:NOP
         ORL     P3, #0FFh
         ORL     P2, #03h
-        MOV     A, #08
-        CJNE    A, pos, lse_eight ; carry if A < pos
-lse_eight:
-        JC      gt_eight
-        MOV     A, #0B0h        ; #0B0h because that's the start of the port 3 bit addresses
-        ADD     A, pos          ; A now has the bit address for the appropriate port if pos <= 8
-        SJMP    disp_bit
-gt_eight:
-        MOV     A, #97h         ; 97h + 09h = 
-        ADD     A, pos          ; A now has the bit address for the appropriate port if pos > 8
-disp_bit:
-        MOV     R1, A           ; Move A into R3 to use it as an address
-        CLR     @R1             ; Clear the bit addressed by R1 to 0 and illuminate the right LED
+        MOV     A, #07
+        CJNE    A, pos, lse_seven ; carry if A < pos
+lse_seven:
+        JC      gt_seven
+        MOV     A, #0FEh
+        MOV     R3, pos
+        INC     R3
+disp_loop:
+        DJNZ    R3, rotate
+        SJMP    push_to_p3
+
+rotate: RL      A
+        SJMP    disp_loop
+        DJNZ    R3, disp_loop
+
+push_to_p3:
+        MOV     P3, A
         RET
+
+gt_seven:
+        MOV     A, pos
+        CJNE    A, #08, is_nine
+        CLR     P2.0
+        RET
+
+is_nine:
+        CLR     P2.1
+        RET
+        
 
 ; ------ pre_delay ------
 Pre_delay:
         MOV     R2, #67
-otlp:   MOV R3, #200            ; Load R3 with 200, 200 * 67 * 1.5 us = 20.1 ms
+otlp:   MOV     R3, #200            ; Load R3 with 200, 200 * 67 * 1.5 us = 20.1 ms
 inlp:   DJNZ    R3, inlp
         DJNZ    R2, otlp
         RET
@@ -176,6 +249,8 @@ Check_buttons:
         XCH     A, old_button    ; puts the value of the new buttons in storage and puts the value of the old buttons on the ACC
         XRL     A, old_button    ; If the buttons are the same change them to 0's
         ANL     A, old_button    ; If the buttons were different and they were pressed they stay.
+        ANL     A, #11000000b         ; Takes the output off of A
+				MOV     B, A
         RET
         
         END

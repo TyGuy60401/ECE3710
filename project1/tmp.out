@@ -1,17 +1,14 @@
 
-A51 MACRO ASSEMBLER V8.2.7.0 - SN: Eval Version
-COPYRIGHT ARM Germany GmbH 2016
+BL51 BANKED LINKER/LOCATER V6.22.2.0 - SN: Eval Version
+COPYRIGHT ARM Germany GmbH 1987 - 2017
+"C:\Users\tydav\gitLocals\ECE3710\project1\pingpong.obj"  TO "C:\Users\tydav\gitLocals\ECE3710\project1\pingpong" RS(256) PL(68) PW(78) 
 
-MACRO ASSEMBLER A51 V8.2.7.0
-NO OBJECT MODULE REQUESTED
-ASSEMBLER INVOKED BY: C:\Keil_v5\C51\BIN\a51.exe pingpong.asm XR GEN DB EP NOMOD51 INCDIR(C:\SiLabs\MCU\Inc) 
+******************************************************************************
+* RESTRICTED VERSION WITH 0800H BYTE CODE SIZE LIMIT; USED: 0140H BYTE (15%) *
+******************************************************************************
 
-LOC  OBJ            LINE     SOURCE
-
-00C9                 396             CLR     @R1             ; Clear the bit addressed by R1 to 0 and illuminate the right LED
-*** _________________________________________^
-*** ERROR #A40 IN 396 (pingpong.asm, LINE 161): INVALID REGISTER
-
-ASSEMBLY COMPLETE.  0 WARNING(S), 1 ERROR(S)
-
-ASSEMBLY COMPLETE.  0 WARNING(S), 1 ERROR(S)
+>> 
+>> 
+>> 
+Program Size: data=16.0 xdata=0 code=320
+LINK/LOCATE RUN COMPLETE.  0 WARNING(S),  0 ERROR(S)

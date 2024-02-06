@@ -20,3 +20,5 @@ project*/*
 !project*/*.wsp
 !project*/*.out
 !project*/*.INC
+
+notes/*
