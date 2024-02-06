@@ -181,24 +181,6 @@ nxt_right:
         MOV     dir, #00
 end_right:
         RET
-; ------ Display ------
-; Display:
-;         ORL     P3, #0FFh
-;         ORL     P2, #03h
-;         MOV     A, #08
-;         CJNE    A, pos, lse_eight ; carry if A < pos
-; lse_eight:
-;         JC      gt_eight
-;         MOV     A, #0B0h        ; #0B0h because that's the start of the port 3 bit addresses
-;         ADD     A, pos          ; A now has the bit address for the appropriate port if pos <= 8
-;         SJMP    disp_bit
-; gt_eight:
-;         MOV     A, #97h         ; 97h + 09h = 
-;         ADD     A, pos          ; A now has the bit address for the appropriate port if pos > 8
-; disp_bit:
-;         MOV     R1, A           ; Move A into R3 to use it as an address
-;         CLR     @R1             ; Clear the bit addressed by R1 to 0 and illuminate the right LED
-;         RET
 
 ; ------ Display ------
 Display:NOP
