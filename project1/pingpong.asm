@@ -58,7 +58,7 @@ not_over:
         CJNE    A, #00, buttons         ; If no buttons were pressed, then restart the game_loop
         SJMP    Game_loop
 buttons:
-				MOV     R5, dir                 ; Using R5 because it hasn't been used before
+        MOV     R5, dir                 ; Using R5 because it hasn't been used before
         CJNE    R5, #00, mvg_r          ; If dir is 1 then mvg_r
         LCALL   Manage_left_win         ;
         JMP     Game_loop
@@ -72,7 +72,7 @@ pre_loop:
         LCALL   Pre_delay
         LCALL   Check_buttons           ; Loads which buttons were pressed into the accumulator
         ANL     A, #11000000b         ; Takes the output off of A
-        CJNE    A, #00h, button_pressed ; If both buttons were pressed
+        CJNE    A, #00h, button_pressed ; If no buttons were pressed
         SJMP    pre_loop
 button_pressed:
         MOV     R4, pos
@@ -90,12 +90,12 @@ Manage_dip_state:
         ANL     A, #11000000b   ; P1_win is the first 2 DIP switches
         RL      A
         RL      A               ; Now A has the proper value for P1_win
-        MOV     P1_win, A       ; P1_win has right value now
+        MOV     p1_win, A       ; P1_win has right value now
 
         MOV     A, P1
         ANL     A, #00110000b
         SWAP    A
-				MOV     P2_win, A
+        MOV     p2_win, A
 
         MOV     A, P1
         ANL     A, #03h         ; The remaining bits contain the speed value
@@ -108,7 +108,7 @@ Change_pos:
         CJNE    R4, #1, move_right ; If dir == 0, move_right
 move_left:
         INC     pos
-				RET
+        RET
 move_right:
         DEC     pos
         RET
@@ -152,7 +152,7 @@ l1:     MOV     R3, #200
 l2:     DJNZ    R3, l2
         DJNZ    R2, l1
         LCALL   Check_buttons           ; Button input is now loaded onto A
-				CJNE    A, #00, delay_end
+        CJNE    A, #00, delay_end
         DJNZ    R4, l0
 delay_end:
         RET
@@ -175,7 +175,7 @@ Manage_right_win:
         CJNE    A, #80h, end_right
         ; We need to find if pos is in the window or not
         MOV     A, pos
-        CJNE    A, p1_win, nxt_right ; Carry flag is set if (pos) < p2_win
+        CJNE    A, p2_win, nxt_right ; Carry flag is set if (pos) < p2_win
 nxt_right:
         JC      end_right
         MOV     dir, #00
@@ -232,7 +232,7 @@ Check_buttons:
         XRL     A, old_button    ; If the buttons are the same change them to 0's
         ANL     A, old_button    ; If the buttons were different and they were pressed they stay.
         ANL     A, #11000000b         ; Takes the output off of A
-				MOV     B, A
+        MOV     B, A
         RET
         
         END
