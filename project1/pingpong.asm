@@ -54,15 +54,6 @@ Game_loop:
         RET
 not_over:
         LCALL   Delay
-
-        CJNE    A, #00, buttons         ; If no buttons were pressed, then restart the game_loop
-        SJMP    Game_loop
-buttons:
-        MOV     R5, dir                 ; Using R5 because it hasn't been used before
-        CJNE    R5, #00, mvg_r          ; If dir is 1 then mvg_r
-        LCALL   Manage_left_win         ;
-        JMP     Game_loop
-mvg_r:  LCALL   Manage_right_win
         JMP     Game_loop
 
 ; ------ Wait_for_start ------
@@ -152,7 +143,16 @@ l1:     MOV     R3, #200
 l2:     DJNZ    R3, l2
         DJNZ    R2, l1
         LCALL   Check_buttons           ; Button input is now loaded onto A
-        CJNE    A, #00, delay_end
+        CJNE    A, #00, buttons         ; If no buttons were pressed, then restart the game_loop
+        SJMP    after_buttons
+buttons:
+        MOV     R5, dir                 ; Using R5 because it hasn't been used before
+        CJNE    R5, #00, mvg_r          ; If dir is 1 then mvg_r
+        LCALL   Manage_left_win         ;
+        JMP     after_buttons
+mvg_r:  LCALL   Manage_right_win
+        JMP     after_buttons
+after_buttons:
         DJNZ    R4, l0
 delay_end:
         RET
