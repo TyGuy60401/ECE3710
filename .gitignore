@@ -9,16 +9,16 @@
 lab*/*
 project*/*
 
-!lab*/*.OBJ
 !lab*/*.asm
 !lab*/*.wsp
 !lab*/*.out
 !lab*/*.INC
+!lab*/*.md
 
-!project*/*.OBJ
 !project*/*.asm
 !project*/*.wsp
 !project*/*.out
 !project*/*.INC
+!project*/*.md
 
 notes/*
