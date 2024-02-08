@@ -1,5 +1,12 @@
 # Notes for the project
 
+Unfortunately, when I was writing the code I did not have the schematic
+in front of me and I did not realize which LEDs were tied to which ends of
+the output, so often when it says moving right or moving left it's actually
+wrong. Unfortunately, I don't know when it is wrong, so you might need to
+test each time it says what it's doing to actually know which side it's
+referring to.
+
 ## commit bd1243
 "I think I got the mashing problem fixed but need to check for bugs"
 
