@@ -174,7 +174,11 @@ end_left:
 Manage_right_win:
         CJNE    A, #80h, end_right
         ; We need to find if pos is in the window or not
+        MOV     A, #10
+        SUBB    A, p2_win
+        MOV     p2_win, A
         MOV     A, pos
+        
         CJNE    A, p2_win, nxt_right ; Carry flag is set if (pos) < p2_win
 nxt_right:
         JC      end_right
@@ -183,7 +187,7 @@ end_right:
         RET
 
 ; ------ Display ------
-Display:NOP
+Display:
         ORL     P3, #0FFh
         ORL     P2, #03h
         MOV     A, #07

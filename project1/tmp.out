@@ -4,11 +4,11 @@ COPYRIGHT ARM Germany GmbH 1987 - 2017
 "C:\Users\tydav\gitLocals\ECE3710\project1\pingpong.obj"  TO "C:\Users\tydav\gitLocals\ECE3710\project1\pingpong" RS(256) PL(68) PW(78) 
 
 ******************************************************************************
-* RESTRICTED VERSION WITH 0800H BYTE CODE SIZE LIMIT; USED: 013FH BYTE (15%) *
+* RESTRICTED VERSION WITH 0800H BYTE CODE SIZE LIMIT; USED: 0144H BYTE (15%) *
 ******************************************************************************
 
 >> 
 >> 
 >> 
-Program Size: data=16.0 xdata=0 code=319
+Program Size: data=16.0 xdata=0 code=324
 LINK/LOCATE RUN COMPLETE.  0 WARNING(S),  0 ERROR(S)
