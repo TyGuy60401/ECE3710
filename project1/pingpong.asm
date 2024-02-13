@@ -4,71 +4,68 @@ $include (c8051f020.inc)
 pos:    DS 1
 old_button:
         DS 1
-dir:    DS 1                    ; direction (0 left, 1 right)
-p1_win: DS 1                    ; player 1 window (1-3) DIP Switches 0,1
-p2_win: DS 1                    ; player 2 window (1-3) DIP Switches 2,3
+dir:    DS 1                    ; direction (0 towards P2, 1 towards P1)
+p1_win: DS 1                    ; player 1 window (1-3) DIP Switches 7LSB & 8MSB, 
+p2_win: DS 1                    ; player 2 window (1-3) DIP Switches 5LSB & 6MSB, 
 start_pos:
         DS 1
-speed:  DS 1                    ; speed of the ping pong DIP Switches 4-7
+speed:  DS 1                    ; speed of the ping pong DIP Switches 1LSB & 2MSB
 game_over:
         DS 1
 
         CSEG
 ; ------ Initialize ------
-        MOV     wdtcn, #0DEh    ; disable watchdog
+          MOV     wdtcn, #0DEh    ; disable watchdog
         MOV     wdtcn, #0ADh
         MOV     xbr2, #40h      ; enable port output
-
         SETB    P2.7            ; Input button
         SETB    P2.6            ; Input button
         MOV     A, #0FFh
         MOV     P1, A           ; Input DIP switches
-
         MOV     A, start_pos
-        XRL     A, #01
-        MOV     start_pos, A
-
-        JB      start_pos.0, start_right ; starting position based on start_pos.0 
-start_left:
-        MOV     pos, #00h
+        XRL     A, #01					; Switches start position 
+        MOV     start_pos, A		; each time the game is started.
+        JB      start_pos.0, start_P1 ; starting position based on start_pos.0 
+start_P2:												; Used when starting as P2.
+        MOV     pos, #00
         MOV     dir, #01
-        JMP     start_1
-start_right:
+        JMP     start
+start_P1:												; Used when starting as P1.
         MOV     pos, #09
         MOV     dir, #00
-start_1:  
+start:  
         MOV     game_over, #00
         LCALL   Wait_for_start
-        LCALL   Game_loop
+        LCALL   Game_loop				; This subroutine is the major subroutine for running the project.
         LCALL   Display         ; pos was changed in the check_game_over subroutine
 endlp:  SJMP    endlp
 
 ; ------ Game_loop ------
 Game_loop:
-        LCALL   Manage_dip_state
-        LCALL   Change_pos
-        LCALL   Display
-        LCALL   Check_game_over
-        MOV     A, game_over
-        CJNE    A, #01, not_over        ; game_over == 1 
+        LCALL   Manage_dip_state	; Checks to see if the dip switches were updated.
+        LCALL   Change_pos				; Updates the position based on which direction the ball is currently moving
+        LCALL   Display						; Displays the updated LED
+        LCALL   Check_game_over		; Checks to see if the game is over.
+        MOV     A, game_over			; Game over is a designated bite that gets updated if the game has ended.
+        CJNE    A, #01, not_over  ; game_over == 1, if the game is over leave game loop subroutine, if not delay and restart game loop.
         RET
-not_over:
+not_over:						
         LCALL   Delay
         JMP     Game_loop
 
 ; ------ Wait_for_start ------
 Wait_for_start:
-        LCALL   Display
+        LCALL   Display									; Display starting position (LED 0 or 9)
 pre_loop:
         LCALL   Pre_delay
         LCALL   Check_buttons           ; Loads which buttons were pressed into the accumulator
-        ANL     A, #11000000b         ; Takes the output off of A
-        CJNE    A, #00h, button_pressed ; If no buttons were pressed
+        ANL     A, #11000000b           ; Takes the output off of A
+        CJNE    A, #00h, button_pressed ; If no buttons were pressed keep checking buttons
         SJMP    pre_loop
 button_pressed:
         MOV     R4, pos
-        CJNE    R4, #09, right_start ; If pos != 0 (must equal 10) then go to right start
-left_start:
+        CJNE    R4, #09, right_start 	; If pos != 0 (must equal 09) then go to right and start
+left_start:													 	; 
         CJNE    A, #80h, pre_loop 
         RET
 right_start:
@@ -148,42 +145,33 @@ l2:     DJNZ    R3, l2
 buttons:
         MOV     R5, dir                 ; Using R5 because it hasn't been used before
         CJNE    R5, #00, mvg_r          ; If dir is 1 then mvg_r
-        LCALL   Manage_left_win         ;
+        LCALL   Manage_P2         ;
         JMP     after_buttons
-mvg_r:  LCALL   Manage_right_win
+mvg_r:  LCALL   Manage_P1
         JMP     after_buttons
 after_buttons:
         DJNZ    R4, l0
 delay_end:
         RET
 
-; ------ Manage_left_win ------
-Manage_left_win:                ; It is going left, and the button input is already in A
-        CJNE    A, #40h, end_left
-        ; We need to find if pos is in the window or not
-        MOV     A, pos
-        INC     p1_win
-        CJNE    A, p1_win, nxt_left ; Carry flag is set if (pos - 1) < p1_win
-nxt_left:
-        JNC     end_left
-        MOV     dir, #01        ; Dir is now 1 because the left paddle was pressed while insde the window
-end_left:
+; ------ Manage_P2 ------
+Manage_P2:													; It is going towards P2
+				MOV			A, pos     					
+        CJNE 		A, P2_win, P2_CD		; If the position is < P2's window(1-3) change direction
+P2_CD:	JNC			end_p2
+				XRL 		dir, #01h					; Flips the direction
+end_p2:
         RET
 
-; ------ Manage_right_win ------
-Manage_right_win:
-        CJNE    A, #80h, end_right
-        ; We need to find if pos is in the window or not
-        MOV     A, #10
-        SUBB    A, p2_win
-        MOV     p2_win, A
-        MOV     A, pos
-        
-        CJNE    A, p2_win, nxt_right ; Carry flag is set if (pos) < p2_win
-nxt_right:
-        JC      end_right
-        MOV     dir, #00
-end_right:
+; ------ Manage_P1 ------
+Manage_P1:													; It is going towards P1
+				CLR 		CY									; Clear the carry so it doesnt mess with subtraction
+				MOV			A, #09
+				SUBB		A, P1_win
+        CJNE 		A, pos, P1_CD				; If the position is inside P2's window(0-2) change direction
+P1_CD:	JNC			end_p1
+				XRL 		dir, #01h						; Flips the direction
+end_p1:
         RET
 
 ; ------ Display ------
