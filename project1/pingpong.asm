@@ -14,8 +14,9 @@ game_over:
         DS 1
 
         CSEG
+
 ; ------ Initialize ------
-          MOV     wdtcn, #0DEh    ; disable watchdog
+        MOV     wdtcn, #0DEh    ; disable watchdog
         MOV     wdtcn, #0ADh
         MOV     xbr2, #40h      ; enable port output
         SETB    P2.7            ; Input button
@@ -23,39 +24,43 @@ game_over:
         MOV     A, #0FFh
         MOV     P1, A           ; Input DIP switches
         MOV     A, start_pos
-        XRL     A, #01					; Switches start position 
-        MOV     start_pos, A		; each time the game is started.
+        XRL     A, #01          ; Switches start position 
+        MOV     start_pos, A    ; each time the game is started.
         JB      start_pos.0, start_P1 ; starting position based on start_pos.0 
-start_P2:												; Used when starting as P2.
+start_P2:                        ; Used when starting as P2.
         MOV     pos, #00
         MOV     dir, #01
         JMP     start
-start_P1:												; Used when starting as P1.
+start_P1:                        ; Used when starting as P1.
         MOV     pos, #09
         MOV     dir, #00
 start:  
         MOV     game_over, #00
         LCALL   Wait_for_start
-        LCALL   Game_loop				; This subroutine is the major subroutine for running the project.
+        LCALL   Game_loop        ; This subroutine is the major subroutine for running the project.
         LCALL   Display         ; pos was changed in the check_game_over subroutine
 endlp:  SJMP    endlp
 
 ; ------ Game_loop ------
+; Main game loop that is called after the
+; delay
+;
+
 Game_loop:
-        LCALL   Manage_dip_state	; Checks to see if the dip switches were updated.
-        LCALL   Change_pos				; Updates the position based on which direction the ball is currently moving
-        LCALL   Display						; Displays the updated LED
-        LCALL   Check_game_over		; Checks to see if the game is over.
-        MOV     A, game_over			; Game over is a designated bite that gets updated if the game has ended.
+        LCALL   Manage_dip_state  ; Checks to see if the dip switches were updated.
+        LCALL   Change_pos        ; Updates the position based on which direction the ball is currently moving
+        LCALL   Display            ; Displays the updated LED
+        LCALL   Check_game_over    ; Checks to see if the game is over.
+        MOV     A, game_over      ; Game over is a designated bite that gets updated if the game has ended.
         CJNE    A, #01, not_over  ; game_over == 1, if the game is over leave game loop subroutine, if not delay and restart game loop.
         RET
-not_over:						
+not_over:            
         LCALL   Delay
         JMP     Game_loop
 
 ; ------ Wait_for_start ------
 Wait_for_start:
-        LCALL   Display									; Display starting position (LED 0 or 9)
+        LCALL   Display                  ; Display starting position (LED 0 or 9)
 pre_loop:
         LCALL   Pre_delay
         LCALL   Check_buttons           ; Loads which buttons were pressed into the accumulator
@@ -64,8 +69,8 @@ pre_loop:
         SJMP    pre_loop
 button_pressed:
         MOV     R4, pos
-        CJNE    R4, #09, right_start 	; If pos != 0 (must equal 09) then go to right and start
-left_start:													 	; 
+        CJNE    R4, #09, right_start   ; If pos != 0 (must equal 09) then go to right and start
+left_start:                             ; 
         CJNE    A, #80h, pre_loop 
         RET
 right_start:
@@ -155,22 +160,22 @@ delay_end:
         RET
 
 ; ------ Manage_P2 ------
-Manage_P2:													; It is going towards P2
-				MOV			A, pos     					
-        CJNE 		A, P2_win, P2_CD		; If the position is < P2's window(1-3) change direction
-P2_CD:	JNC			end_p2
-				XRL 		dir, #01h					; Flips the direction
+Manage_P2:              ; It is going towards P2
+        MOV     A, pos               
+        CJNE    A, P2_win, P2_CD        ; If the position is < P2's window(1-3) change direction
+P2_CD:  JNC     end_p2
+        XRL     dir, #01h               ; Flips the direction
 end_p2:
         RET
 
 ; ------ Manage_P1 ------
-Manage_P1:													; It is going towards P1
-				CLR 		CY									; Clear the carry so it doesnt mess with subtraction
-				MOV			A, #09
-				SUBB		A, P1_win
-        CJNE 		A, pos, P1_CD				; If the position is inside P2's window(0-2) change direction
-P1_CD:	JNC			end_p1
-				XRL 		dir, #01h						; Flips the direction
+Manage_P1:                              ; It is going towards P1
+        CLR     CY                  ; Clear the carry so it doesnt mess with subtraction
+        MOV     A, #09
+        SUBB    A, P1_win
+        CJNE    A, pos, P1_CD        ; If the position is inside P2's window(0-2) change direction
+P1_CD:  JNC     end_p1
+        XRL     dir, #01h            ; Flips the direction
 end_p1:
         RET
 
