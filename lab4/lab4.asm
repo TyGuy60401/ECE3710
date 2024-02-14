@@ -14,9 +14,9 @@ pos:    DS 1
         MOV     P1, A           ; Input DIP switches
 
 start:  
-        MOV     game_over, #00
+        MOV     pos, #0FFh
+        LCALL   Display
         LCALL   Wait_for_start
-        LCALL   Display         ; pos was changed in the check_game_over subroutine
 endlp:  SJMP    endlp
 
 ; ------ Wait_for_start ------
@@ -60,7 +60,12 @@ Manage_dip_state:
 Display:
         ORL     P3, #0FFh
         ORL     P2, #03h
+        MOV     A, #0FFh
+        CJNE    A, pos, do_display
+        JMP     display_end
+do_display:
         MOV     A, #07
+        CJNE    A, 
         CJNE    A, pos, lse_seven ; carry if A < pos
 lse_seven:
         JC      gt_seven
@@ -87,6 +92,7 @@ gt_seven:
 
 is_nine:
         CLR     P2.1
+display_end:
         RET
         
 
@@ -147,5 +153,16 @@ Check_buttons:
         ANL     A, #11000000b         ; Takes the output off of A
         MOV     B, A
         RET
+
+msg_0:  db "It is certain"
+msg_1:  db "You may rely on it"
+msg_2:  db "Without a doubt"
+msg_3:  db "Yes"
+msg_4:  db "Most likely"
+msg_5:  db "Reply hazy, try again"
+msg_6:  db "Concentrate and ask again"
+msg_7:  db "Don't count on it"
+msg_8:  db "Very doubtful"
+msg_9:  db "My reply is no"
         
         END
