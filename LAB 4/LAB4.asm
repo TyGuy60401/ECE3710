@@ -32,8 +32,10 @@ WTBTNS: CALL 		delay_10ms 					; uses timer for delay
 continue:
 				CALL Check_buttons 					; this is from Lab 3
 				CJNE 		A, #01, NEXT				; If the check buttons reports no buttons pressed A = 0 or A < 1, then we will keep pressing
+				JNB			SCON0.0
 NEXT:		JNC 		WTBTNS							; Uses carry value from last statment to decide if a button was pressed.
-				call send_string
+				CALL 		MESSAGE
+				CALL 		send_string
 
 
 ; ------ send string ------
@@ -70,49 +72,69 @@ Check_buttons:
         ANL     A, old_button    ; If the buttons were different and they were pressed they stay.
         ANL     A, #11000000b    ; Puts wether or not a button was pressed into A
         RET
-; ------------- Display LED's ----------------
-DISP_LED: 	
-not_zero: CJNE  random, #00h, not_one  ; Compares accumulator with 0, if true it turns on the last light and ends the game.
-        mov dptr, msg_0
+; ------------- MESSAGE ----------------
+MESSAGE: 	
+not_one: 
+				CJNE  	random, #01, not_one  ; Compares accumulator with 0, if true it turns on the last light and ends the game.
+        mov 		dptr, msg_1
+				CLR			P3.0
         RET
-not_one: CJNE   random, #01h, not_two  ; Compares accumulator with 1, if true it turns on the LED, if not it jumps to next bit if the accumulator bit is not 1.
-        mov dptr, msg_0
+not_two: 
+				CJNE   	random, #02, not_two  ; Compares accumulator with 1, if true it turns on the LED, if not it jumps to next bit if the accumulator bit is not 1.
+        mov 		dptr, msg_2
+				CLR			P3.1
         RET
-not_two: CJNE   random, #02h, not_three
-        mov dptr, msg_0
+not_three: 
+				CJNE   	random, #03, not_three
+        mov 		dptr, msg_3
+				CLR			P3.2
         RET
-not_three: CJNE random, #03h, not_four
-        CLR     P3.3
+not_four: 
+				CJNE 		random, #04, not_four
+        mov 		dptr, msg_4
+				CLR			P3.3
         RET
-not_four: CJNE  random, #04h, not_five
-        CLR     P3.4
+not_five: 
+				CJNE  	random, #05, not_five
+        mov 		dptr, msg_5
+				CLR			P3.4
         RET
-not_five: CJNE  random, #05h, not_six
+not_six: 
+				CJNE  		random, #06, not_six
+				mov 		dptr, msg_6
         CLR     P3.5
         RET
-not_six: CJNE   random, #06h, not_seven
+not_seven: 
+				CJNE   	random, #07, not_seven
+				mov 		dptr, msg_7
         CLR     P3.6
         RET
-not_seven: CJNE random, #07h, not_eight
+not_eight: 
+				CJNE 		random, #08, not_eight
+				mov 		dptr, msg_8
         CLR     P3.7
         RET
-not_eight: CJNE random, #08h, not_nine 
+not_nine: 
+				CJNE 		random, #09, not_nine
+				mov 		dptr, msg_9 
         CLR     P2.0
         RET		
-not_nine: CJNE random, #09h, not_one   ; if true it turns on the last light and ends the game.
+not_10: CJNE 		random, #10, not_one   ; if true it turns on the last light and ends the game.
+				mov 		dptr, msg_10
         CLR     P2.1
         RET	
 
-msg_0:  db 			"It is certain", 0DH, 0AH, 0
-msg_1:  db 			"You may rely on it", 0DH, 0AH, 0
-msg_2:  db 			"Without a doubt", 0DH, 0AH, 0
-msg_3:  db 			"Yes", 0DH, 0AH, 0
-msg_4:  db 			"Most likely", 0DH, 0AH, 0
-msg_5:  db 			"Reply hazy, try again", 0DH, 0AH, 0
-msg_6:  db 			"Concentrate and ask again", 0DH, 0AH, 0
-msg_7:  db 			"Don't count on it", 0DH, 0AH, 0
-msg_8:  db 			"Very doubtful", 0DH, 0AH, 0
-msg_9:  db 			"My reply is no", 0DH, 0AH, 0
+msg_1:  db 			"It is certain", 0DH, 0AH, 0
+msg_2:  db 			"You may rely on it", 0DH, 0AH, 0
+msg_3:  db 			"Without a doubt", 0DH, 0AH, 0
+msg_4:  db 			"Yes", 0DH, 0AH, 0
+msg_5:  db 			"Most likely", 0DH, 0AH, 0
+msg_6:  db 			"Reply hazy, try again", 0DH, 0AH, 0
+msg_7:  db 			"Concentrate and ask again", 0DH, 0AH, 0
+msg_8:  db 			"Don't count on it", 0DH, 0AH, 0
+msg_9:  db 			"Very doubtful", 0DH, 0AH, 0
+msg_10:  
+				db 			"My reply is no", 0DH, 0AH, 0
 CRLF:		db 			0DH, 0AH, 0
 
 				END
