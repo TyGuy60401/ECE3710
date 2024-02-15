@@ -74,52 +74,53 @@ Check_buttons:
         RET
 ; ------------- MESSAGE ----------------
 MESSAGE: 	
+        MOV		  A, random
 not_one: 
-				CJNE  	random, #01, not_one  ; Compares accumulator with 0, if true it turns on the last light and ends the game.
+				CJNE  	A, #01, not_one  ; Compares accumulator with 0, if true it turns on the last light and ends the game.
         mov 		dptr, msg_1
 				CLR			P3.0
         RET
 not_two: 
-				CJNE   	random, #02, not_two  ; Compares accumulator with 1, if true it turns on the LED, if not it jumps to next bit if the accumulator bit is not 1.
+				CJNE   	A, #02, not_two  ; Compares accumulator with 1, if true it turns on the LED, if not it jumps to next bit if the accumulator bit is not 1.
         mov 		dptr, msg_2
 				CLR			P3.1
         RET
 not_three: 
-				CJNE   	random, #03, not_three
+				CJNE   	A, #03, not_three
         mov 		dptr, msg_3
 				CLR			P3.2
         RET
 not_four: 
-				CJNE 		random, #04, not_four
+				CJNE 		A, #04, not_four
         mov 		dptr, msg_4
 				CLR			P3.3
         RET
 not_five: 
-				CJNE  	random, #05, not_five
+				CJNE  	A, #05, not_five
         mov 		dptr, msg_5
 				CLR			P3.4
         RET
 not_six: 
-				CJNE  		random, #06, not_six
+				CJNE    A, #06, not_six
 				mov 		dptr, msg_6
         CLR     P3.5
         RET
 not_seven: 
-				CJNE   	random, #07, not_seven
+				CJNE   	A, #07, not_seven
 				mov 		dptr, msg_7
         CLR     P3.6
         RET
 not_eight: 
-				CJNE 		random, #08, not_eight
+				CJNE 		A, #08, not_eight
 				mov 		dptr, msg_8
         CLR     P3.7
         RET
 not_nine: 
-				CJNE 		random, #09, not_nine
+				CJNE 		A, #09, not_nine
 				mov 		dptr, msg_9 
         CLR     P2.0
         RET		
-not_10: CJNE 		random, #10, not_one   ; if true it turns on the last light and ends the game.
+not_10: CJNE 		A, #10, not_one   ; if true it turns on the last light and ends the game.
 				mov 		dptr, msg_10
         CLR     P2.1
         RET	
