@@ -1,77 +1,14 @@
 
-A51 MACRO ASSEMBLER V8.2.7.0 - SN: Eval Version
-COPYRIGHT ARM Germany GmbH 2016
+BL51 BANKED LINKER/LOCATER V6.22.2.0 - SN: Eval Version
+COPYRIGHT ARM Germany GmbH 1987 - 2017
+"C:\Users\brenn\OneDrive\Documents\GIT Repositories\ECE3710\LAB 4\LAB4.obj"  TO "C:\Users\brenn\OneDrive\Documents\GIT Repositories\ECE3710\LAB 4\LAB4" RS(256) PL(68) PW(78) 
 
-MACRO ASSEMBLER A51 V8.2.7.0
-NO OBJECT MODULE REQUESTED
-ASSEMBLER INVOKED BY: C:\Keil\C51\BIN\A51.EXE LAB4.asm XR GEN DB EP NOMOD51 INCDIR(C:\SiLabs\MCU\Inc) 
+******************************************************************************
+* RESTRICTED VERSION WITH 0800H BYTE CODE SIZE LIMIT; USED: 0170H BYTE (17%) *
+******************************************************************************
 
-LOC  OBJ            LINE     SOURCE
-
-002B                 270                                     JNB                     SCON0.0
-*** _________________________________________________________^
-*** ERROR #A38 IN 270 (LAB4.asm, LINE 35): NUMBER OF OPERANDS DOES NOT MATCH INSTRUCTION
-0058                 313                                     CJNE    random, #01, not_one  ; Compares accumulator with 0, if true it turns on the last light and ends the game.
-*** _________________________________________________________________^
-*** ERROR #A39 IN 313 (LAB4.asm, LINE 78): REGISTER OPERAND EXPECTED
-0058                 314             mov             dptr, msg_1
-*** _________________________________________________^
-*** ERROR #A40 IN 314 (LAB4.asm, LINE 79): INVALID REGISTER
-005B                 318                                     CJNE    random, #02, not_two  ; Compares accumulator with 1, if true it turns on the LED, if not it jumps to next bit if the accumulator bit is not 1.
-*** _________________________________________________________________^
-*** ERROR #A39 IN 318 (LAB4.asm, LINE 83): REGISTER OPERAND EXPECTED
-005B                 319             mov             dptr, msg_2
-*** _________________________________________________^
-*** ERROR #A40 IN 319 (LAB4.asm, LINE 84): INVALID REGISTER
-005E                 323                                     CJNE    random, #03, not_three
-*** _________________________________________________________________^
-*** ERROR #A39 IN 323 (LAB4.asm, LINE 88): REGISTER OPERAND EXPECTED
-005E                 324             mov             dptr, msg_3
-*** _________________________________________________^
-*** ERROR #A40 IN 324 (LAB4.asm, LINE 89): INVALID REGISTER
-0061                 328                                     CJNE            random, #04, not_four
-*** _________________________________________________________________________^
-*** ERROR #A39 IN 328 (LAB4.asm, LINE 93): REGISTER OPERAND EXPECTED
-0061                 329             mov             dptr, msg_4
-*** _________________________________________________^
-*** ERROR #A40 IN 329 (LAB4.asm, LINE 94): INVALID REGISTER
-0064                 333                                     CJNE    random, #05, not_five
-*** _________________________________________________________________^
-*** ERROR #A39 IN 333 (LAB4.asm, LINE 98): REGISTER OPERAND EXPECTED
-0064                 334             mov             dptr, msg_5
-*** _________________________________________________^
-*** ERROR #A40 IN 334 (LAB4.asm, LINE 99): INVALID REGISTER
-0067                 338                                     CJNE            random, #06, not_six
-*** _________________________________________________________________________^
-*** ERROR #A39 IN 338 (LAB4.asm, LINE 103): REGISTER OPERAND EXPECTED
-0067                 339                                     mov             dptr, msg_6
-*** _________________________________________________________________________^
-*** ERROR #A40 IN 339 (LAB4.asm, LINE 104): INVALID REGISTER
-006A                 343                                     CJNE    random, #07, not_seven
-*** _________________________________________________________________^
-*** ERROR #A39 IN 343 (LAB4.asm, LINE 108): REGISTER OPERAND EXPECTED
-006A                 344                                     mov             dptr, msg_7
-*** _________________________________________________________________________^
-*** ERROR #A40 IN 344 (LAB4.asm, LINE 109): INVALID REGISTER
-006D                 348                                     CJNE            random, #08, not_eight
-*** _________________________________________________________________________^
-*** ERROR #A39 IN 348 (LAB4.asm, LINE 113): REGISTER OPERAND EXPECTED
-006D                 349                                     mov             dptr, msg_8
-*** _________________________________________________________________________^
-*** ERROR #A40 IN 349 (LAB4.asm, LINE 114): INVALID REGISTER
-0070                 353                                     CJNE            random, #09, not_nine
-*** _________________________________________________________________________^
-*** ERROR #A39 IN 353 (LAB4.asm, LINE 118): REGISTER OPERAND EXPECTED
-0070                 354                                     mov             dptr, msg_9 
-*** _________________________________________________________________________^
-*** ERROR #A40 IN 354 (LAB4.asm, LINE 119): INVALID REGISTER
-0073                 357     not_10: CJNE            random, #10, not_one   ; if true it turns on the last light and ends the game.
-*** _________________________________________________^
-*** ERROR #A39 IN 357 (LAB4.asm, LINE 122): REGISTER OPERAND EXPECTED
-0073                 358                                     mov             dptr, msg_10
-*** _________________________________________________________________________^
-*** ERROR #A40 IN 358 (LAB4.asm, LINE 123): INVALID REGISTER
-
-ASSEMBLY COMPLETE.  0 WARNING(S), 21 ERROR(S)
-
-ASSEMBLY COMPLETE.  0 WARNING(S), 21 ERROR(S)
+>> 
+>> 
+>> 
+Program Size: data=10.0 xdata=0 code=368
+LINK/LOCATE RUN COMPLETE.  0 WARNING(S),  0 ERROR(S)

@@ -32,8 +32,9 @@ WTBTNS: CALL 		delay_10ms 					; uses timer for delay
 continue:
 				CALL Check_buttons 					; this is from Lab 3
 				CJNE 		A, #01, NEXT				; If the check buttons reports no buttons pressed A = 0 or A < 1, then we will keep pressing
-				JNB			SCON0.0
-NEXT:		JNC 		WTBTNS							; Uses carry value from last statment to decide if a button was pressed.
+NEXT:		JB			SCON0.0, msg_call							; 
+				JNC 		WTBTNS							; Uses carry value from last statment to decide if a button was pressed.
+msg_call:
 				CALL 		MESSAGE
 				CALL 		send_string
 
@@ -51,6 +52,7 @@ done: 	RET
 
 ; ------- send_byte ------
 send_byte:
+				MOV 		SBUF0, A
 				RET
 
 ;	------ 10ms Delay ------
@@ -77,51 +79,51 @@ MESSAGE:
         MOV		  A, random
 not_one: 
 				CJNE  	A, #01, not_one  ; Compares accumulator with 0, if true it turns on the last light and ends the game.
-        mov 		dptr, msg_1
+        mov 		dptr, #msg_1
 				CLR			P3.0
         RET
 not_two: 
 				CJNE   	A, #02, not_two  ; Compares accumulator with 1, if true it turns on the LED, if not it jumps to next bit if the accumulator bit is not 1.
-        mov 		dptr, msg_2
+        mov 		dptr, #msg_2
 				CLR			P3.1
         RET
 not_three: 
 				CJNE   	A, #03, not_three
-        mov 		dptr, msg_3
+        mov 		dptr, #msg_3
 				CLR			P3.2
         RET
 not_four: 
 				CJNE 		A, #04, not_four
-        mov 		dptr, msg_4
+        mov 		dptr, #msg_4
 				CLR			P3.3
         RET
 not_five: 
 				CJNE  	A, #05, not_five
-        mov 		dptr, msg_5
+        mov 		dptr, #msg_5
 				CLR			P3.4
         RET
 not_six: 
 				CJNE    A, #06, not_six
-				mov 		dptr, msg_6
+				mov 		dptr, #msg_6
         CLR     P3.5
         RET
 not_seven: 
 				CJNE   	A, #07, not_seven
-				mov 		dptr, msg_7
+				mov 		dptr, #msg_7
         CLR     P3.6
         RET
 not_eight: 
 				CJNE 		A, #08, not_eight
-				mov 		dptr, msg_8
+				mov 		dptr, #msg_8
         CLR     P3.7
         RET
 not_nine: 
 				CJNE 		A, #09, not_nine
-				mov 		dptr, msg_9 
+				mov 		dptr, #msg_9 
         CLR     P2.0
         RET		
 not_10: CJNE 		A, #10, not_one   ; if true it turns on the last light and ends the game.
-				mov 		dptr, msg_10
+				mov 		dptr, #msg_10
         CLR     P2.1
         RET	
 
