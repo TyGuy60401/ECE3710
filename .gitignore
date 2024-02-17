@@ -10,13 +10,11 @@ lab*/*
 project*/*
 
 !lab*/*.asm
-!lab*/*.wsp
 !lab*/*.out
 !lab*/*.INC
 !lab*/*.md
 
 !project*/*.asm
-!project*/*.wsp
 !project*/*.out
 !project*/*.INC
 !project*/*.md
