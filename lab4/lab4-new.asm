@@ -7,6 +7,8 @@
 ;       - brennanstevenson@mail.weber.edu
 ; Revision History
 ; Date  Version Description
+; 2/14  1.0     Almost working, needs a little more work
+; 2/17  1.1     Finished version, might use some optimization, but it still works
 
 $include (c8051f020.inc)
         DSEG at 20h
