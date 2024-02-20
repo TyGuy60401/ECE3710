@@ -13,10 +13,12 @@ project*/*
 !lab*/*.out
 !lab*/*.INC
 !lab*/*.md
+!lab*/*.png
 
 !project*/*.asm
 !project*/*.out
 !project*/*.INC
 !project*/*.md
+!project*/*.png
 
 notes/*
