@@ -69,12 +69,14 @@ done:   RET
 ; ------- send_byte ------
 send_byte:
         MOV     SBUF0, A
-        CALL    delay_5ms   ; I think this is supposed to be some delay specific to the timer, but I found that about 5ms worked just find.
+        CALL    serial_delay
         RET
+
 ; ------- serial_delay ------
 serial_delay:
-        JNB     tf1, serial_delay
-        CLR     tf1
+delay_here:
+        JNB     ti, delay_here
+        CLR     ti
         RET
 
 
@@ -88,15 +90,6 @@ WAIT:   JNB     TF0, WAIT
         CLR     TR0
         RET
 
-;------ 5ms Delay ------
-delay_5ms:        
-        MOV     TL0, #low(-4044)
-        MOV     TH0, #high(-4044)
-        SETB    TR0
-WAIT_5: JNB     TF0, WAIT_5
-        CLR     TF0
-        CLR     TR0
-        RET
 ; ------ Check_buttons ------
 Check_buttons: 
         MOV     A, P2
