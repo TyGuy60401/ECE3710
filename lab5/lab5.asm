@@ -6,6 +6,7 @@
 ;       - brennanstevenson@mail.weber.edu
 ; Revision History
 ; Date  Version Description
+; 2/28/24 0	Initial commit, almost got it working
 $include (c8051f020.inc)
 
 	DSEG at 20h
