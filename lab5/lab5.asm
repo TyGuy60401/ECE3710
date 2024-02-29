@@ -7,7 +7,6 @@
 ; Revision History
 ; Date  Version Description
 ; 2/28/24 0	Initial commit, almost got it working
-; 2/29/24 1	Finalized transmit interrupt & added LED function to timer2 interrupt
 $include (c8051f020.inc)
 
 	DSEG at 20h
@@ -67,6 +66,7 @@ TX_INT:
 	CLR			A 
 	MOVC 		A, @A+DPTR
 	CJNE		A, #10, tx_next
+	MOV 		DPTR, #msg_1
 	RETI
 tx_next:
 	MOV			SBUF0, A
@@ -95,7 +95,9 @@ t2_next:
 	MOV 	R3, #10
 	INC 	count
 	MOV	R4, count
-	CJNE    R4, #100, t2_end
+	CJNE    R4, #100, t2_next1
+t2_next1:
+	JNC			t2_end
 	MOV     count, 0
 
 t2_end:
