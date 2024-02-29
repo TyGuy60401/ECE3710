@@ -30,7 +30,7 @@ game_over:
 
         CSEG
 ; ------ Initialize ------
-          MOV     wdtcn, #0DEh    ; disable watchdog
+        MOV     wdtcn, #0DEh    ; disable watchdog
         MOV     wdtcn, #0ADh
         MOV     xbr2, #40h      ; enable port output
         SETB    P2.7            ; Input button

@@ -1,6 +1,6 @@
 ; File Header
 ; - Magic 8 Ball
-; - Random number generator from 1-8.
+; - Random number generator from 1-10.
 ; - Ty Davis & Brennan Stevenson
 ; - Weber State University
 ;       - tydavis@mail.weber.edu
@@ -32,6 +32,7 @@ wait1:  JNB     tf1, wait1
         CLR     TF1
 wait2:
         MOV     A, oscxcn       ; wait for the crystal to stabilize
+
         JNB     ACC.7, wait2
         MOV     OSCICN, #8      ; engage! Now using 22.1184 MHz
         MOV     SCON0, #50H     ; 8-bit, 1 stop bit, REN Enabled
