@@ -94,16 +94,15 @@ t2_next:
 	DJNZ	R3, t2_end
 	MOV 	R3, #10
 	INC 	count
-	MOV	R4, count
-	CJNE    R4, #100, t2_next1
-t2_next1:
-	JNC			t2_end
+	MOV		R4, count
+	CJNE    R4, #100, t2_end
 	MOV     count, 0
 
 t2_end:
-	MOV B, Count			; Next three lines are used to display the count on the LEDs
-	XRL B, #0FFh							; CPL count since LED's are ative LOW.
-	MOV P3, B					; Show the count on the 8 LED's
+	MOV A, Count			; Next three lines are used to display the count on the LEDs
+	DA  A
+	CPL A							; CPL count since LED's are ative LOW.
+	MOV P3, A					; Show the count on the 8 LED's
 	RETI
 	
 
