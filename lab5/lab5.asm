@@ -7,6 +7,7 @@
 ; Revision History
 ; Date  Version Description
 ; 2/28/24 0	Initial commit, almost got it working
+; 2/29/24 1	Finalized transmit interrupt & added LED function to timer2 interrupt
 $include (c8051f020.inc)
 
 	DSEG at 20h
@@ -57,14 +58,19 @@ not_c:  CJNE    A, #074h, rx_end   ; t key input - the bulk of the lab right her
 	SWAP    A
 	ADD	A, #30h
 	MOV	SBUF0, A
-	
-
 rx_end:
 	RETI
 
 ; ------ Subroutine for transmission of a character over
 ;	serial connection
-TX_INT: MOV	A, #20h
+TX_INT:
+	CLR			A 
+	MOVC 		A, @A+DPTR
+	CJNE		A, #10, tx_next
+	RETI
+tx_next:
+	MOV			SBUF0, A
+	INC 		dptr
 	RETI
 
 ; ------ Subroutine for 10 ms delay and handling that interrupt
@@ -93,6 +99,9 @@ t2_next:
 	MOV     count, 0
 
 t2_end:
+	MOV B, Count			; Next three lines are used to display the count on the LEDs
+	XRL B, #0FFh							; CPL count since LED's are ative LOW.
+	MOV P3, B					; Show the count on the 8 LED's
 	RETI
 	
 
@@ -125,7 +134,8 @@ wait2:
 	MOV     SCON0, #50H     ; 8-bit, 1 stop bit, REN Enabled
 	MOV     TH1, #-6	; Loads value for 9600 Baud serial com timer
 	SETB    TR1	     ; Start the serial com timer
-
+	msg_1:  db 			".", snapshot_tenth, 0DH, 0AH, 10
+	mov 		dptr, #msg_1
 
 
 	MOV     RCAP2H, #high(-18432)
@@ -155,7 +165,4 @@ Check_buttons:
 	MOV     B, A
 	RET
 	
-
-
-
 	END
