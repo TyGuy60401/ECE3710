@@ -52,7 +52,6 @@ not_c:  CJNE    A, #074h, rx_end   ; t key input - the bulk of the lab right her
 	ANL     A, #0Fh
 	MOV     snapshot_tenth, A
 	MOV     A, count
-	DA	A
 	ANL     A, #0F0h
 	SWAP    A
 	ADD	A, #30h
@@ -63,14 +62,21 @@ rx_end:
 ; ------ Subroutine for transmission of a character over
 ;	serial connection
 TX_INT:
-	CLR			A 
-	MOVC 		A, @A+DPTR
-	CJNE		A, #10, tx_next
-	MOV 		DPTR, #msg_1
+	CLR	A 
+	MOVC	A, @A+DPTR
+	CJNE	A, #11, tx_not_eleven
+	MOV	A, snapshot_tenth
+	ADD	A, #30h
+	MOV	SBUF0, A
+	INC	DPTR
+	RETI
+tx_not_eleven:
+	CJNE	A, #0, tx_next
+	MOV 	DPTR, #msg_1
 	RETI
 tx_next:
-	MOV			SBUF0, A
-	INC 		dptr
+	MOV	SBUF0, A
+	INC 	DPTR
 	RETI
 
 ; ------ Subroutine for 10 ms delay and handling that interrupt
@@ -93,16 +99,18 @@ t2_next:
 	JNB     running.0, t2_end
 	DJNZ	R3, t2_end
 	MOV 	R3, #10
-	INC 	count
-	MOV		R4, count
-	CJNE    R4, #100, t2_end
-	MOV     count, 0
+	MOV	A, count
+	ADD	A, #1
+	DA	A
+	MOV	count, A
+	JNC	t2_end
+	MOV     count, #0
+	; MOV 	A, Count	; Next three lines are used to display the count on the LEDs
 
 t2_end:
-	MOV A, Count			; Next three lines are used to display the count on the LEDs
-	DA  A
-	CPL A							; CPL count since LED's are ative LOW.
-	MOV P3, A					; Show the count on the 8 LED's
+	MOV	A, count
+	CPL 	A		; CPL count since LED's are ative LOW.
+	MOV 	P3, A		; Show the count on the 8 LED's
 	RETI
 	
 
@@ -135,8 +143,8 @@ wait2:
 	MOV     SCON0, #50H     ; 8-bit, 1 stop bit, REN Enabled
 	MOV     TH1, #-6	; Loads value for 9600 Baud serial com timer
 	SETB    TR1	     ; Start the serial com timer
-	msg_1:  db 			".", snapshot_tenth, 0DH, 0AH, 10
-	mov 		dptr, #msg_1
+msg_1:  db 	".", 11, 0DH, 0AH, 0
+	mov 	dptr, #msg_1
 
 
 	MOV     RCAP2H, #high(-18432)
