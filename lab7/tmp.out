@@ -1,0 +1,15 @@
+
+BL51 BANKED LINKER/LOCATER V6.22.2.0 - SN: Eval Version
+COPYRIGHT ARM Germany GmbH 1987 - 2017
+"C:\Users\tydav\gitLocals\ECE3710\lab7\thermost.obj",
+"C:\Users\tydav\gitLocals\ECE3710\lab7\lcd.obj"  TO "C:\Users\tydav\gitLocals\ECE3710\lab7\lab7" RS(256) PL(68) PW(78)  
+
+******************************************************************************
+* RESTRICTED VERSION WITH 0800H BYTE CODE SIZE LIMIT; USED: 030AH BYTE (37%) *
+******************************************************************************
+
+>> 
+>> 
+>> 
+Program Size: data=21.0 xdata=1024 code=1064
+LINK/LOCATE RUN COMPLETE.  0 WARNING(S),  0 ERROR(S)
