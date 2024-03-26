@@ -7,10 +7,20 @@
 **/*cyglink*
 
 lab*/*
+project*/*
 
-!lab*/*.OBJ
 !lab*/*.asm
-!lab*/*.wsp
 !lab*/*.out
 !lab*/*.INC
+!lab*/*.md
+!lab*/*.png
+!lab*/*.c
+!lab*/*.h
 
+!project*/*.asm
+!project*/*.out
+!project*/*.INC
+!project*/*.md
+!project*/*.png
+
+notes/*
