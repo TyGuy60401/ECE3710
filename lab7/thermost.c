@@ -1,6 +1,27 @@
 #include <C8051F020.h>
 #include <lcd.h>
 
+void send_char(char my_char) {
+    int i = x * 5 + y * 1000;
+    x = x * 5;
+    y = y * 256;
+    for (i = x + y; i < 5; i++) {
+        screen[i] = font5x8[my_char + 20 * 5 + i];
+    }    
+}
+
+void send_string(int x, int y, char *my_str) {
+    while (*my_str) {
+        screen[x] = send_char(x, y, *my_str);
+    }
+}
+
+
+void end_loop() {
+    while (1) {}
+}
+
+
 void main()
 {
     WDTCN = 0xde;   // disable watchdog
@@ -25,3 +46,4 @@ void main()
     REF0CN = 0x03;  //Enables temperature sensor & initializes Vref for ADC0
     init_lcd();
 }
+
