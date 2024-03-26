@@ -45,5 +45,7 @@ void main()
     // ADC0H & ADC0L store the value of the ADC ADC0H Bits 3-0 & all of ADC0L
     REF0CN = 0x03;  //Enables temperature sensor & initializes Vref for ADC0
     init_lcd();
+    send_str(1, 1, "testing");
+    end_loop();
 }
 
