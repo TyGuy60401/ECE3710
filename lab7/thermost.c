@@ -1,19 +1,22 @@
 #include <C8051F020.h>
 #include <lcd.h>
 
-void send_char(char my_char) {
-    int i = x * 5 + y * 1000;
-    x = x * 5;
-    y = y * 256;
-    for (i = x + y; i < 5; i++) {
-        screen[i] = font5x8[my_char + 20 * 5 + i];
-    }    
+void send_char(int x, int y, char my_char) {
+    int screenPos = x * 5 + y * 128;
+	int i;
+    for (i = 0; i < 5; i++) {
+        screen[screenPos + i] = font5x8[my_char * 5 - 32 * 5 + i];
+    }
 }
 
 void send_string(int x, int y, char *my_str) {
+	int i = 0;
     while (*my_str) {
-        screen[x] = send_char(x, y, *my_str);
+        send_char(x + i, y, *my_str);
+		i++;
+		my_str++;
     }
+	refresh_screen();
 }
 
 
@@ -45,7 +48,7 @@ void main()
     // ADC0H & ADC0L store the value of the ADC ADC0H Bits 3-0 & all of ADC0L
     REF0CN = 0x03;  //Enables temperature sensor & initializes Vref for ADC0
     init_lcd();
-    send_str(1, 1, "testing");
+    send_string(0, 0, "We can now print strings to the screen.");
     end_loop();
 }
 
