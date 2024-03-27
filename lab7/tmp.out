@@ -4,12 +4,21 @@ COPYRIGHT ARM Germany GmbH 1987 - 2017
 "C:\Users\tydav\gitLocals\ECE3710\lab7\thermost.obj",
 "C:\Users\tydav\gitLocals\ECE3710\lab7\lcd.obj"  TO "C:\Users\tydav\gitLocals\ECE3710\lab7\thermost" RS(256) PL(68) PW(78) 
 
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?END_LOOP?THERMOST
+
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?_INIT_MEMPOOL?INIT_MEM
+
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?C_INITSEG
+
 ******************************************************************************
-* RESTRICTED VERSION WITH 0800H BYTE CODE SIZE LIMIT; USED: 0398H BYTE (44%) *
+* RESTRICTED VERSION WITH 0800H BYTE CODE SIZE LIMIT; USED: 0578H BYTE (68%) *
 ******************************************************************************
 
 >> 
 >> 
 >> 
-Program Size: data=20.0 xdata=1024 code=995
-LINK/LOCATE RUN COMPLETE.  0 WARNING(S),  0 ERROR(S)
+Program Size: data=58.1 xdata=1032 code=4352
+LINK/LOCATE RUN COMPLETE.  3 WARNING(S),  0 ERROR(S)
