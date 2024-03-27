@@ -3,8 +3,9 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-#define TEMP_CHANNEL 0x0F
-#define POT_CHANNEL_0 0x00
+// #define TEMP_CHANNEL 0x0F
+// #define POT_CHANNEL_0 0x00
+#define READ_DELAY 8
 
 void send_char(int x, int y, char my_char) {
     int screenPos = x * 5 + y * 128;
@@ -27,8 +28,7 @@ void send_string(int x, int y, char *my_str) {
 void delay(int ms) {
 	int i, j;
 	for (i = 0; i < ms; i ++) {
-		for (j = 0; j < 2384; j ++) {
-		}
+		for (j = 0; j < 2384; j ++) {}
 	}
 }
 
@@ -43,28 +43,39 @@ void end_loop() {
     while (1) {}
 }
 
-unsigned int read_adc(unsigned char channel) {
+unsigned int read_adc() {
 	unsigned int return_value = 0;
-    AMX0SL = channel;             // Select ADC input channel
     ADC0CN &= ~0x20;              // Clear the "conversion completed" flag
     ADC0CN |= 0x10;               // Start conversion
     while (!(ADC0CN & 0x20));     // Wait for conversion to complete
     return (ADC0L | (ADC0H << 8)); // Return ADC value
 }
 
-float read_temp() {
-	unsigned int adc_value = read_adc(TEMP_CHANNEL);
-	return (((float)adc_value * 0.805) - 50) * 1.8 + 32;
+unsigned int read_temp() {
+	unsigned int adc_value;
+	ADC0CF = 0x41;
+	AMX0SL = 0x08;
+	delay(READ_DELAY);
+	return read_adc();
+	// return (((float)adc_value * 0.805) - 50) * 1.8 + 32;
 }
 
-float read_pot() {
-	unsigned int adc_value = read_adc(POT_CHANNEL_0);
-	float output = (float)adc_value;
-	return output; // hasn't yet been converted. Still just getting garbage out of the adc
+unsigned int read_pot() {
+	unsigned int adc_value; 
+	float output;
+	ADC0CF = 0x40;
+	AMX0SL = 0x00;
+	delay(READ_DELAY);
+	return read_adc();
+	// adc_value = read_adc();
+	// output = (float)adc_value;
+	// return output; // hasn't yet been converted. Still just getting garbage out of the adc
 }
 
 
 void main_loop() {
+	unsigned int temp_raw;
+	unsigned int pot_raw;
 	float temp = 0;
 	float pot = 0;
 	int i, j;
@@ -73,22 +84,25 @@ void main_loop() {
 	char *pot_str = malloc(str_size);
 
 	while(1) {
-		temp = 0;
-		pot = 0;
-		for (i = 0; i < 256; i++) {
-			temp = temp + read_temp();
-			pot = pot + read_pot();
-			delay(1);
+		temp_raw = 0;
+		pot_raw = 0;
+		for (i = 0; i < 16; i++) {
+			temp_raw = temp_raw + read_temp();
+			pot_raw = pot_raw + read_pot();
 		}
-		temp = temp / 256;
-		pot = pot / 256;
+		temp_raw = temp_raw >> 4;
+		pot_raw = pot_raw >> 4;
 
-		sprintf(temp_str, "%5.1f", temp);	
-		sprintf(pot_str, "%5.1f", pot);	
+		temp_raw = ((temp_raw - 2475) * 12084L) >> 16;
+		temp = (float)temp_raw;
+		pot_raw = (55 + (pot_raw * 31L)>>12);
+		pot = (float)pot_raw;
+
+		sprintf(temp_str, "%5.1f", temp);
+		sprintf(pot_str, "%5.1f", pot);
 
 		send_string(7, 1, temp_str);
 		send_string(7, 2, pot_str);
-
 
 
 		if (temp > pot) {
@@ -117,11 +131,11 @@ void main()
     TH1 = -6;       // 9600 baud
     AMX0CF = 0x00;  // Writes AMUX0 to be single ended inputs.
     // AMX0SL = 0x0F;  // Set to use Temperature Sensor.
-    ADC0CF = 0x40;  // Sets ADoSC = (8sysclk/clkSAR0) -1 & a gain of 0
+    // ADC0CF = 0x40;  // Sets ADoSC = (8sysclk/clkSAR0) -1 & a gain of 0
     ADC0CN = 0x80;  // Turns on ADC0, with continuous tracking, with data adjusted right
                     // & conversion being initiated by a 1 being written to bit 4. (0x90)
     // ADC0H & ADC0L store the value of the ADC ADC0H Bits 3-0 & all of ADC0L
-    REF0CN = 0x03;  //Enables temperature sensor & initializes Vref for ADC0
+    REF0CN = 0x07;  //Enables temperature sensor & initializes Vref for ADC0
     init_lcd();
 	show_default_strings();
 	main_loop();

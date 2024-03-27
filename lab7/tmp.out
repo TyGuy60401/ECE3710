@@ -14,11 +14,11 @@ COPYRIGHT ARM Germany GmbH 1987 - 2017
     SEGMENT: ?C_INITSEG
 
 ******************************************************************************
-* RESTRICTED VERSION WITH 0800H BYTE CODE SIZE LIMIT; USED: 0578H BYTE (68%) *
+* RESTRICTED VERSION WITH 0800H BYTE CODE SIZE LIMIT; USED: 0568H BYTE (67%) *
 ******************************************************************************
 
 >> 
 >> 
 >> 
-Program Size: data=58.1 xdata=1032 code=4352
+Program Size: data=60.1 xdata=1032 code=4435
 LINK/LOCATE RUN COMPLETE.  3 WARNING(S),  0 ERROR(S)
