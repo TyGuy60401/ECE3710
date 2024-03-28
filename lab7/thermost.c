@@ -59,7 +59,6 @@ unsigned int read_temp() {
 	AMX0SL = 0x08;
 	delay(READ_DELAY);
 	return read_adc();
-	// return (((float)adc_value * 0.805) - 50) * 1.8 + 32;
 }
 
 unsigned int read_pot() {
@@ -69,9 +68,6 @@ unsigned int read_pot() {
 	AMX0SL = 0x04;
 	delay(READ_DELAY);
 	return read_adc();
-	// adc_value = read_adc();
-	// output = (float)adc_value;
-	// return output; // hasn't yet been converted. Still just getting garbage out of the adc
 }
 
 
