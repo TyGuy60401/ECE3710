@@ -219,7 +219,8 @@ font5x8:
   db  000H, 000H, 077H, 000H, 000H ; |
   db  000H, 041H, 041H, 03EH, 008H ; }
   db  002H, 001H, 002H, 001H, 000H ; ~
-  db  006H, 009H, 009H, 006H, 000H ;  
+  db  006H, 009H, 009H, 006H, 000H ; degree  
+  db  000H, 002H, 005H, 002H, 000H ; degree smaller
 
 	xseg
 screen:	ds 1024

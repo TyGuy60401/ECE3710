@@ -7,11 +7,11 @@
 // #define POT_CHANNEL_0 0x00
 #define READ_DELAY 8
 
-void send_char(int x, int y, char my_char) {
+void send_char(int x, int y, unsigned char my_char) {
     int screenPos = x * 5 + y * 128;
 	int i;
     for (i = 0; i < 5; i++) {
-        screen[screenPos + i] = font5x8[my_char * 5 - 32 * 5 + i];
+        screen[screenPos + i] = font5x8[(my_char - 32) * 5 + i];
     }
 }
 
@@ -34,8 +34,10 @@ void delay(int ms) {
 
 
 void show_default_strings() {
-	send_string(1, 1, "Temp:       F");
-	send_string(1, 2, " Set:       F");
+	send_string(1, 1, "Temp:    F");
+	send_string(1, 2, " Set:    F");
+	send_char(9, 1, 128);
+	send_char(9, 2, 128);
 }
 
 
@@ -64,7 +66,7 @@ unsigned int read_pot() {
 	unsigned int adc_value; 
 	float output;
 	ADC0CF = 0x40;
-	AMX0SL = 0x00;
+	AMX0SL = 0x04;
 	delay(READ_DELAY);
 	return read_adc();
 	// adc_value = read_adc();
@@ -95,11 +97,11 @@ void main_loop() {
 
 		temp_raw = ((temp_raw - 2475) * 12084L) >> 16;
 		temp = (float)temp_raw;
-		pot_raw = (55 + (pot_raw * 31L)>>12);
+		pot_raw = 55 + (55 + (pot_raw * 31L)>>12);
 		pot = (float)pot_raw;
 
-		sprintf(temp_str, "%5.1f", temp);
-		sprintf(pot_str, "%5.1f", pot);
+		sprintf(temp_str, "%d", temp_raw);
+		sprintf(pot_str, "%d", pot_raw);
 
 		send_string(7, 1, temp_str);
 		send_string(7, 2, pot_str);
@@ -107,8 +109,10 @@ void main_loop() {
 
 		if (temp > pot) {
 			P3 = 0xFF;
+			P2 = 0x03;
 		} else {
 			P3 = 0x00;
+			P2 = 0x00;
 		}
 	}
 }
